@@ -100,6 +100,7 @@ pub trait IntoScaleInPitches<Q: ScaleQuality> {
 /// * `Q` - The scale quality (e.g., major, minor)
 /// * `T` - The type of elements in the scale (Interval, Step, or Pitch)
 /// * `N` - The number of elements in the scale
+#[derive(Debug)]
 pub struct Scale<Q: ScaleQuality, T, const N: usize> {
     /// Phantom data to maintain the scale quality type parameter
     quality: PhantomData<Q>,
@@ -118,7 +119,7 @@ impl<Q: ScaleQuality, T, const N: usize> Scale<Q, T, N> {
     ///
     /// A new scale containing the given elements
     #[inline]
-    pub(crate) const fn new(items: [T; N]) -> Self {
+    pub const fn new(items: [T; N]) -> Self {
         Self {
             items,
             quality: PhantomData,
