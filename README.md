@@ -1,14 +1,26 @@
 # no-surprises
 
-A Rust library focused on providing predictable and reliable behavior in your applications.
+[![Rust](https://github.com/yourusername/no-surprises-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/yourusername/no-surprises-rs/actions/workflows/rust.yml)
+
+A Rust library for working with musical scales, intervals, and pitches in a type-safe and predictable way.
 
 ## Overview
 
-`no-surprises` is designed to help developers write more reliable and predictable code by providing tools and utilities that enforce consistent behavior and prevent common pitfalls.
+`no-surprises` provides a comprehensive set of tools for working with musical concepts in Rust. It offers type-safe abstractions for:
+- Musical scales
+- Intervals
+- Pitches
+- Steps
+
+The library is designed to prevent common musical theory errors at compile time and provide a reliable foundation for music-related applications.
 
 ## Features
 
-- Coming soon...
+- Type-safe musical scale definitions
+- Interval calculations and transformations
+- Pitch manipulation and transposition
+- Step-based scale navigation
+- Compile-time validation of musical concepts
 
 ## Installation
 
@@ -22,9 +34,19 @@ no-surprises = "0.1.0"
 ## Usage
 
 ```rust
-use no_surprises;
+use no_surprises::prelude::*;
 
-// Example usage coming soon...
+// Create a scale
+let scale = Scale::new(/* ... */);
+
+// Work with intervals
+let intervals = scale.into_intervals();
+
+// Manipulate pitches
+let pitches = scale.into_pitches(root_pitch);
+
+// Navigate steps
+let steps = scale.into_steps();
 ```
 
 ## Contributing
