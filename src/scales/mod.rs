@@ -47,15 +47,15 @@ pub trait ScaleQuality {}
 /// # Examples
 ///
 /// ```
-/// use no_surprises::scales::{IntoScaleInIntervals, IntoScaleInSteps, ScaleInSteps, major_scale};
+/// use no_surprises::scales::{ToScaleInIntervals, ToScaleInSteps, ScaleInSteps, major_scale};
 /// use no_surprises::prelude::*;
 /// use no_surprises::scales::constants::*;
 ///
-/// let steps = major_scale(C4).into_scale_in_steps::<7>();
-/// let scale = steps.into_scale_in_intervals::<7>();
+/// let steps = major_scale(C4).to_scale_in_steps::<7>();
+/// let scale = steps.to_scale_in_intervals::<7>();
 /// assert_eq!(scale.intervals(), &MAJOR_SCALE_INTERVALS);
 /// ```
-pub trait IntoScaleInIntervals<Q: ScaleQuality> {
+pub trait ToScaleInIntervals<Q: ScaleQuality> {
     /// Converts the scale into a sequence of intervals
     ///
     /// # Type Parameters
@@ -65,7 +65,7 @@ pub trait IntoScaleInIntervals<Q: ScaleQuality> {
     /// # Returns
     ///
     /// A scale containing the intervals between scale degrees
-    fn into_scale_in_intervals<const M: usize>(&self) -> Scale<Q, Interval, M>;
+    fn to_scale_in_intervals<const M: usize>(&self) -> Scale<Q, Interval, M>;
 }
 
 /// Trait for converting a scale into its step representation
@@ -81,16 +81,16 @@ pub trait IntoScaleInIntervals<Q: ScaleQuality> {
 /// # Examples
 ///
 /// ```
-/// use no_surprises::scales::{IntoScaleInSteps, ScaleInIntervals, IntoScaleInIntervals, major_scale};
+/// use no_surprises::scales::{ToScaleInSteps, ScaleInIntervals, ToScaleInIntervals, major_scale};
 /// use no_surprises::prelude::*;
 /// use no_surprises::scales::constants::*;
 ///
-/// let scale = major_scale(C4).into_scale_in_intervals::<7>();
-/// let scale = scale.into_scale_in_steps::<7>();
+/// let scale = major_scale(C4).to_scale_in_intervals::<7>();
+/// let scale = scale.to_scale_in_steps::<7>();
 ///
 /// assert_eq!(scale.steps(), &MAJOR_SCALE_STEPS);
 /// ```
-pub trait IntoScaleInSteps<Q: ScaleQuality> {
+pub trait ToScaleInSteps<Q: ScaleQuality> {
     /// Converts the scale into a sequence of steps
     ///
     /// # Type Parameters
@@ -100,7 +100,7 @@ pub trait IntoScaleInSteps<Q: ScaleQuality> {
     /// # Returns
     ///
     /// A scale containing the steps between scale degrees
-    fn into_scale_in_steps<const M: usize>(&self) -> Scale<Q, Step, M>;
+    fn to_scale_in_steps<const M: usize>(&self) -> Scale<Q, Step, M>;
 }
 
 /// Trait for converting a scale into its pitch representation
@@ -116,15 +116,15 @@ pub trait IntoScaleInSteps<Q: ScaleQuality> {
 /// # Examples
 ///
 /// ```
-/// use no_surprises::scales::{IntoScaleInPitches, IntoScaleInSteps, ScaleInSteps, major_scale};
+/// use no_surprises::scales::{ToScaleInPitches, ToScaleInSteps, ScaleInSteps, major_scale};
 /// use no_surprises::prelude::*;
 /// use no_surprises::scales::constants::*;
 ///
-/// let steps = major_scale(C4).into_scale_in_steps::<7>();
-/// let pitches = steps.into_scale_in_pitches::<8>(C4);
+/// let steps = major_scale(C4).to_scale_in_steps::<7>();
+/// let pitches = steps.to_scale_in_pitches::<8>(C4);
 /// assert_eq!(pitches.items(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
 /// ```
-pub trait IntoScaleInPitches<Q: ScaleQuality> {
+pub trait ToScaleInPitches<Q: ScaleQuality> {
     /// Converts the scale into a sequence of pitches
     ///
     /// # Type Parameters
@@ -138,7 +138,7 @@ pub trait IntoScaleInPitches<Q: ScaleQuality> {
     /// # Returns
     ///
     /// A scale containing the pitches, starting from the root pitch
-    fn into_scale_in_pitches<const M: usize>(&self, root: Pitch) -> Scale<Q, Pitch, M>;
+    fn to_scale_in_pitches<const M: usize>(&self, root: Pitch) -> Scale<Q, Pitch, M>;
 }
 
 /// A generic scale type that can represent a scale in any form
@@ -156,16 +156,16 @@ pub trait IntoScaleInPitches<Q: ScaleQuality> {
 /// # Examples
 ///
 /// ```
-/// use no_surprises::scales::{Scale, MajorScaleQuality, major_scale, IntoScaleInSteps, IntoScaleInIntervals};
+/// use no_surprises::scales::{Scale, MajorScaleQuality, major_scale, ToScaleInSteps, ToScaleInIntervals};
 /// use no_surprises::scales::constants::*;
 /// use no_surprises::prelude::*;
 ///
 /// // Create a scale with intervals
-/// let scale = major_scale(C4).into_scale_in_intervals();
+/// let scale = major_scale(C4).to_scale_in_intervals();
 /// assert_eq!(scale.intervals(), &MAJOR_SCALE_INTERVALS);
 ///
 /// // Create a scale with steps
-/// let scale = major_scale(C4).into_scale_in_steps();
+/// let scale = major_scale(C4).to_scale_in_steps();
 /// assert_eq!(scale.steps(), &MAJOR_SCALE_STEPS);
 ///
 /// // Create a scale with pitches

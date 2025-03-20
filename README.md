@@ -44,10 +44,10 @@ let scale = major_scale(C4);
 assert_eq!(scale.pitches(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
 
 // Convert between scale representations
-let steps = scale.into_scale_in_steps();
+let steps = scale.to_scale_in_steps();
 assert_eq!(steps.steps(), &[WHOLE, WHOLE, HALF, WHOLE, WHOLE, WHOLE, HALF]);
 
-let intervals = scale.into_scale_in_intervals();
+let intervals = scale.to_scale_in_intervals();
 assert_eq!(intervals.intervals(), &[
     MAJOR_SECOND,
     MAJOR_THIRD,
@@ -67,13 +67,13 @@ let custom_scale = ScaleInSteps::<MyScaleQuality, 7>::new([
 let steps = custom_scale.steps();
 
 // Convert into a scale on intervals
-let scale = custom_scale.into_scale_in_intervals::<7>();
+let scale = custom_scale.to_scale_in_intervals::<7>();
 
 // Get the intervals in the scale
 let intervals = scale.intervals();
 
 // Convert into a scale on pitches
-let scale = scale.into_scale_in_pitches::<8>(C4);
+let scale = scale.to_scale_in_pitches::<8>(C4);
 
 // Get the pitches in the scale
 let pitches = scale.pitches();

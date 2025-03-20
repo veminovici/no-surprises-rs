@@ -5,7 +5,7 @@
 //! representations (pitches, intervals, and steps).
 
 use super::{
-    IntoScaleInIntervals, IntoScaleInSteps, Scale, ScaleInIntervals, ScaleInSteps, ScaleQuality,
+    Scale, ScaleInIntervals, ScaleInSteps, ScaleQuality, ToScaleInIntervals, ToScaleInSteps,
 };
 use crate::{IntoIntervals, IntoSteps, Pitch};
 
@@ -50,11 +50,11 @@ impl<Q: ScaleQuality, const N: usize> ScaleInPitches<Q, N> {
     }
 }
 
-/// Implementation of IntoScaleInIntervals for scales represented as pitches
+/// Implementation of ToScaleInIntervals for scales represented as pitches
 ///
 /// This implementation allows converting a scale from pitches to intervals
 /// by calculating the distances between consecutive pitches.
-impl<Q: ScaleQuality, const N: usize> IntoScaleInIntervals<Q> for ScaleInPitches<Q, N> {
+impl<Q: ScaleQuality, const N: usize> ToScaleInIntervals<Q> for ScaleInPitches<Q, N> {
     /// Converts the scale from pitches to intervals
     ///
     /// # Type Parameters
@@ -69,7 +69,7 @@ impl<Q: ScaleQuality, const N: usize> IntoScaleInIntervals<Q> for ScaleInPitches
     ///
     /// Panics if M != N - 1 (checked via debug_assert)
     #[inline]
-    fn into_scale_in_intervals<const M: usize>(&self) -> ScaleInIntervals<Q, M> {
+    fn to_scale_in_intervals<const M: usize>(&self) -> ScaleInIntervals<Q, M> {
         debug_assert!(
             M == N - 1,
             "ScaleInPitches has one more item than ScaleInIntervals. We got N={} and M={}",
@@ -82,11 +82,11 @@ impl<Q: ScaleQuality, const N: usize> IntoScaleInIntervals<Q> for ScaleInPitches
     }
 }
 
-/// Implementation of IntoScaleInSteps for scales represented as pitches
+/// Implementation of ToScaleInSteps for scales represented as pitches
 ///
 /// This implementation allows converting a scale from pitches to steps
 /// by calculating the differences between consecutive pitches.
-impl<Q: ScaleQuality, const N: usize> IntoScaleInSteps<Q> for ScaleInPitches<Q, N> {
+impl<Q: ScaleQuality, const N: usize> ToScaleInSteps<Q> for ScaleInPitches<Q, N> {
     /// Converts the scale from pitches to steps
     ///
     /// # Type Parameters
@@ -101,7 +101,7 @@ impl<Q: ScaleQuality, const N: usize> IntoScaleInSteps<Q> for ScaleInPitches<Q, 
     ///
     /// Panics if M != N - 1 (checked via debug_assert)
     #[inline]
-    fn into_scale_in_steps<const M: usize>(&self) -> ScaleInSteps<Q, M> {
+    fn to_scale_in_steps<const M: usize>(&self) -> ScaleInSteps<Q, M> {
         debug_assert!(
             M == N - 1,
             "ScaleInPitches has one more item than ScaleInSteps. We got N={} and M={}",
@@ -137,10 +137,10 @@ mod tests {
     }
 
     #[test]
-    fn test_scale_in_pitches_into_scale_in_intervals() {
+    fn test_scale_in_pitches_to_scale_in_intervals() {
         let pitches = [C4, D4, DSHARP4, E4];
         let scale_in_pitches = ScaleInPitches::<TestScaleQuality, 4>::new(pitches);
-        let scale_in_intervals = scale_in_pitches.into_scale_in_intervals();
+        let scale_in_intervals = scale_in_pitches.to_scale_in_intervals();
 
         assert_eq!(
             scale_in_intervals.items(),
@@ -149,10 +149,10 @@ mod tests {
     }
 
     #[test]
-    fn test_scale_in_pitches_into_scale_in_steps() {
+    fn test_scale_in_pitches_to_scale_in_steps() {
         let pitches = [C4, D4, DSHARP4, E4];
         let scale_in_pitches = ScaleInPitches::<TestScaleQuality, 4>::new(pitches);
-        let scale_in_steps = scale_in_pitches.into_scale_in_steps();
+        let scale_in_steps = scale_in_pitches.to_scale_in_steps();
 
         assert_eq!(scale_in_steps.items(), &[WHOLE, HALF, HALF]);
     }

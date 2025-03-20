@@ -21,7 +21,7 @@
 //!
 //! ```rust
 //! use no_surprises::prelude::*;
-//! use no_surprises::scales::{major_scale, IntoScaleInSteps, IntoScaleInIntervals};
+//! use no_surprises::scales::{major_scale, ToScaleInSteps, ToScaleInIntervals};
 //!
 //! // Create a pitch and add a step
 //! let c4 = C4; // Middle C
@@ -40,7 +40,7 @@
 //! assert_eq!(major_scale.pitches(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
 //!
 //! // Convert between scale representations
-//! let steps = major_scale.into_scale_in_steps();
+//! let steps = major_scale.to_scale_in_steps();
 //! assert_eq!(steps.steps(), &[WHOLE, WHOLE, HALF, WHOLE, WHOLE, WHOLE, HALF]);
 //! ```
 //!

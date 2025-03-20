@@ -15,7 +15,7 @@ use constants::MAJOR_SCALE_IN_INTERVALS;
 use crate::Pitch;
 use crate::scales::constants::*;
 use crate::scales::{
-    IntoScaleInPitches, ScaleInIntervals, ScaleInPitches, ScaleInSteps, ScaleQuality,
+    ScaleInIntervals, ScaleInPitches, ScaleInSteps, ScaleQuality, ToScaleInPitches,
 };
 
 /// Quality marker for major scales.
@@ -52,7 +52,7 @@ type MajorScaleInPitches = ScaleInPitches<MajorScaleQuality, MAJOR_SCALE_PITCHES
 /// assert_eq!(scale.pitches(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
 /// ```
 pub fn major_scale(root: Pitch) -> MajorScaleInPitches {
-    MAJOR_SCALE_IN_INTERVALS.into_scale_in_pitches(root)
+    MAJOR_SCALE_IN_INTERVALS.to_scale_in_pitches(root)
 }
 
 /// Creates a major scale using the steps-based implementation.
@@ -76,7 +76,7 @@ pub fn major_scale(root: Pitch) -> MajorScaleInPitches {
 /// assert_eq!(scale.pitches(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
 /// ```
 pub fn major_scale_in_steps(root: Pitch) -> MajorScaleInPitches {
-    constants::MAJOR_SCALE_IN_STEPS.into_scale_in_pitches(root)
+    constants::MAJOR_SCALE_IN_STEPS.to_scale_in_pitches(root)
 }
 
 pub(crate) mod constants {
