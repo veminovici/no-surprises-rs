@@ -73,6 +73,7 @@
 //! This project is licensed under the MIT License - see the LICENSE file for details.
 
 pub mod core;
+pub mod scales;
 
 /// The prelude module re-exports commonly used types and constants.
 ///
@@ -103,3 +104,5 @@ pub mod prelude {
 
 #[allow(unused_imports)]
 pub use prelude::*;
+
+pub use scales::*;
