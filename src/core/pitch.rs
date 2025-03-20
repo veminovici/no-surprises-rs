@@ -138,7 +138,12 @@ impl<const N: usize> IntoIntervals for [Pitch; N] {
             return [Interval::default(); M];
         }
 
-        debug_assert!(M == N - 1);
+        debug_assert!(
+            M == N - 1,
+            "For pitches into intervals, M must be equal to N - 1, got M={} and N={}",
+            M,
+            N
+        );
 
         let mut intervals = [Interval::default(); M];
 
@@ -179,7 +184,12 @@ impl<const N: usize> IntoSteps for [Pitch; N] {
             return [Step::default(); M];
         }
 
-        debug_assert!(M == N - 1);
+        debug_assert!(
+            M == N - 1,
+            "For pitches into steps, M must be equal to N - 1, got M={} and N={}",
+            M,
+            N
+        );
 
         let mut steps = [Step::default(); M];
 

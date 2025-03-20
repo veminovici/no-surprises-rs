@@ -84,7 +84,12 @@ impl<const N: usize> IntoIntervals for [Step; N] {
     ///
     /// Panics if M != N (checked via debug_assert)
     fn into_intervals<const M: usize>(self) -> [Interval; M] {
-        debug_assert!(M == N);
+        debug_assert!(
+            M == N,
+            "For steps into intervals, M must be equal to N, got M={} and N={}",
+            M,
+            N
+        );
 
         let scan_callback = |state: &mut Option<Interval>, step: &Step| -> Option<Interval> {
             let interval = state.map_or(Interval::from(*step), |prev| prev + *step);
@@ -125,7 +130,12 @@ impl<const N: usize> IntoPitches for [Step; N] {
     ///
     /// Panics if M != N + 1 (checked via debug_assert)
     fn into_pitches<const M: usize>(self, root: Pitch) -> [Pitch; M] {
-        debug_assert!(M == N + 1);
+        debug_assert!(
+            M == N + 1,
+            "For steps into pitches, M must be equal to N + 1, got M={} and N={}",
+            M,
+            N
+        );
 
         let scan_state = |last: &mut Pitch, step: &Step| -> Option<Pitch> {
             let pitch = *last + *step;
