@@ -18,15 +18,15 @@
 //! use no_surprises::prelude::*;
 //!
 //! // Create a pitch and add a step
-//! let pitch = Pitch::new(60); // Middle C
-//! let new_pitch = pitch + Step::new(2);
+//! let c4 = C4; // Middle C
+//! let d4 = c4 + WHOLE;
 //!
 //! // Work with intervals
-//! let interval = Interval::new(4); // Major third
+//! let interval = MAJOR_THIRD;
 //! let step = Step::from(interval);
 //!
 //! // Convert between types
-//! let pitches = [Pitch::new(60), Pitch::new(62), Pitch::new(65)];
+//! let pitches = [C4, D4, E4];
 //! let intervals: [Interval; 2] = pitches.into_intervals();
 //! ```
 //!
@@ -89,7 +89,7 @@ pub mod core;
 /// use no_surprises::prelude::*;
 ///
 /// // Now you can use all the core types and constants directly
-/// let pitch = Pitch::new(60);
+/// let pitch = C4;
 /// let interval = MAJOR_THIRD;
 /// let step = HALF;
 /// ```
