@@ -20,6 +20,36 @@ use crate::{IntoIntervals, IntoSteps, Pitch};
 /// * `N` - The number of pitches in the scale
 pub type ScaleInPitches<Q, const N: usize> = Scale<Q, Pitch, N>;
 
+impl<Q: ScaleQuality, const N: usize> ScaleInPitches<Q, N> {
+    /// Returns a reference to the pitches in the scale
+    ///
+    /// This function provides access to the underlying array of pitches that make up the scale.
+    /// Each pitch represents an actual note in the scale, with its specific frequency and position
+    /// in the musical scale.
+    ///
+    /// # Returns
+    ///
+    /// A reference to the array of pitches in the scale
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use no_surprises::prelude::*;
+    /// use no_surprises::scales::{ScaleInPitches, ScaleQuality};
+    ///
+    /// struct MajorScale;
+    /// impl ScaleQuality for MajorScale {}
+    ///
+    /// let pitches = [C4, D4, E4, F4, G4, A4, B4, C5];
+    /// let scale = ScaleInPitches::<MajorScale, 8>::new(pitches);
+    /// assert_eq!(scale.pitches(), &pitches);
+    /// ```
+    #[inline]
+    pub const fn pitches(&self) -> &[Pitch; N] {
+        &self.items
+    }
+}
+
 /// Implementation of IntoScaleInIntervals for scales represented as pitches
 ///
 /// This implementation allows converting a scale from pitches to intervals
@@ -91,6 +121,18 @@ mod tests {
     /// A test scale quality for testing scale operations
     struct TestScaleQuality;
     impl ScaleQuality for TestScaleQuality {}
+
+    #[test]
+    fn test_pitches_accessor() {
+        let pitches = [C4, D4, DSHARP4, E4];
+        let scale = ScaleInPitches::<TestScaleQuality, 4>::new(pitches);
+
+        // Test that we can access the pitches
+        assert_eq!(scale.pitches(), &pitches);
+
+        // Test that the pitches are the same as the items
+        assert_eq!(scale.pitches(), scale.items());
+    }
 
     #[test]
     fn test_scale_in_pitches_into_scale_in_intervals() {

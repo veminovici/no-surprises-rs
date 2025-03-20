@@ -37,16 +37,22 @@ no-surprises = "0.1.0"
 use no_surprises::prelude::*;
 
 // Create a scale
-let scale = Scale::new(/* ... */);
+let scale = ScaleInSteps::<MyScaleQuality, 7>::new([WHOLE, WHOLE, HALF, WHOLE, WHOLE, WHOLE, HALF, WHOLE])
 
-// Work with intervals
-let intervals = scale.into_intervals();
+// Get the steps in the scale
+let steps = scale.steps();
 
-// Manipulate pitches
-let pitches = scale.into_pitches(root_pitch);
+// Convert into a scale on intervals
+let scale = scale.into_scale_in_intervals::<7>();
 
-// Navigate steps
-let steps = scale.into_steps();
+// Get the intervals in the scale
+let intervals = scale.intervals();
+
+// Convert into a scale on pitches
+let scale = scale.into_scale_in_pitches::<8>(C4);
+
+// Get the pitches in the scale.
+let pitches = scale.pitches();
 ```
 
 ## Examples
@@ -62,12 +68,16 @@ cargo run --example 02_operations
 
 # Run the slice operations example
 cargo run --example 03_slice_operations
+
+# Run the scale operations example
+cargo run --example 04_basic_scales
 ```
 
 Each example demonstrates different aspects of the library:
 - `01_constants`: Demonstrates the use of predefined musical constants
 - `02_operations`: Shows various operations like adding steps to pitches and calculating distances
 - `03_slice_operations`: Demonstrates working with slices of musical elements
+- `04_basic_scales`: Shows various operations like transforming from scales based on steps to ones based on intervals
 
 ## Contributing
 

@@ -20,6 +20,35 @@ use crate::{Interval, IntoPitches, IntoSteps, Pitch};
 /// * `N` - The number of intervals in the scale
 pub type ScaleInIntervals<Q, const N: usize> = Scale<Q, Interval, N>;
 
+impl<Q: ScaleQuality, const N: usize> ScaleInIntervals<Q, N> {
+    /// Returns a reference to the intervals in the scale
+    ///
+    /// This function provides access to the underlying array of intervals that make up the scale.
+    /// Each interval represents the distance between consecutive scale degrees.
+    ///
+    /// # Returns
+    ///
+    /// A reference to the array of intervals in the scale
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use no_surprises::prelude::*;
+    /// use no_surprises::scales::{ScaleInIntervals, ScaleQuality};
+    ///
+    /// struct MajorScale;
+    /// impl ScaleQuality for MajorScale {}
+    ///
+    /// let intervals = [MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND];
+    /// let scale = ScaleInIntervals::<MajorScale, 7>::new(intervals);
+    /// assert_eq!(scale.intervals(), &intervals);
+    /// ```
+    #[inline]
+    pub const fn intervals(&self) -> &[Interval; N] {
+        &self.items
+    }
+}
+
 /// Implementation of IntoScaleInSteps for scales represented as intervals
 ///
 /// This implementation allows converting a scale from intervals to steps
@@ -95,6 +124,18 @@ mod tests {
     /// A test scale quality for testing scale operations
     struct TestScaleQuality;
     impl ScaleQuality for TestScaleQuality {}
+
+    #[test]
+    fn test_intervals_accessor() {
+        let intervals = [MAJOR_SECOND, MINOR_THIRD, MAJOR_THIRD];
+        let scale = ScaleInIntervals::<TestScaleQuality, 3>::new(intervals);
+
+        // Test that we can access the intervals
+        assert_eq!(scale.intervals(), &intervals);
+
+        // Test that the intervals are the same as the items
+        assert_eq!(scale.intervals(), scale.items());
+    }
 
     #[test]
     fn test_scale_in_intervals_into_scale_in_steps() {
