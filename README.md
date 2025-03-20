@@ -49,6 +49,26 @@ let pitches = scale.into_pitches(root_pitch);
 let steps = scale.into_steps();
 ```
 
+## Examples
+
+The library includes several example applications that demonstrate its functionality:
+
+```bash
+# Run the constants example
+cargo run --example 01_constants
+
+# Run the operations example
+cargo run --example 02_operations
+
+# Run the slice operations example
+cargo run --example 03_slice_operations
+```
+
+Each example demonstrates different aspects of the library:
+- `01_constants`: Demonstrates the use of predefined musical constants
+- `02_operations`: Shows various operations like adding steps to pitches and calculating distances
+- `03_slice_operations`: Demonstrates working with slices of musical elements
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
