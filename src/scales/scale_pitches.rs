@@ -68,6 +68,7 @@ impl<Q: ScaleQuality, const N: usize> IntoScaleInIntervals<Q> for ScaleInPitches
     /// # Panics
     ///
     /// Panics if M != N - 1 (checked via debug_assert)
+    #[inline]
     fn into_scale_in_intervals<const M: usize>(self) -> ScaleInIntervals<Q, M> {
         debug_assert!(
             M == N - 1,
@@ -99,6 +100,7 @@ impl<Q: ScaleQuality, const N: usize> IntoScaleInSteps<Q> for ScaleInPitches<Q, 
     /// # Panics
     ///
     /// Panics if M != N - 1 (checked via debug_assert)
+    #[inline]
     fn into_scale_in_steps<const M: usize>(self) -> ScaleInSteps<Q, M> {
         debug_assert!(
             M == N - 1,

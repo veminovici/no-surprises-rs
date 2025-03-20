@@ -67,6 +67,7 @@ impl<Q: ScaleQuality, const N: usize> IntoScaleInSteps<Q> for ScaleInIntervals<Q
     /// # Panics
     ///
     /// Panics if M != N (checked via debug_assert)
+    #[inline]
     fn into_scale_in_steps<const M: usize>(self) -> ScaleInSteps<Q, M> {
         debug_assert!(
             M == N,

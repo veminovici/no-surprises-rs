@@ -143,6 +143,7 @@ impl<const N: usize> IntoSteps for [Interval; N] {
     /// # Panics
     ///
     /// Panics if M != N (checked via debug_assert)
+    #[inline]
     fn into_steps<const M: usize>(self) -> [Step; M] {
         debug_assert!(
             M == N,
@@ -189,6 +190,7 @@ impl<const N: usize> IntoPitches for [Interval; N] {
     /// # Panics
     ///
     /// Panics if M != N + 1 (checked via debug_assert)
+    #[inline]
     fn into_pitches<const M: usize>(self, root: Pitch) -> [Pitch; M] {
         debug_assert!(
             M == N + 1,
