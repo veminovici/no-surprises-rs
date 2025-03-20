@@ -207,44 +207,63 @@ impl<const N: usize> IntoSteps for [Pitch; N] {
 /// Constants for common musical pitches in octave 4.
 pub(crate) mod constants {
     use super::Pitch;
+    use paste::paste;
 
-    /// Middle C (MIDI note 60)
-    pub const C4: Pitch = Pitch::new(60);
-    /// C#4/Db4 (MIDI note 61)
-    pub const CSHARP4: Pitch = Pitch::new(61);
-    /// D#4/Eb4 (MIDI note 63)
-    pub const DFLAT4: Pitch = CSHARP4;
-    /// D4 (MIDI note 62)
-    pub const D4: Pitch = Pitch::new(62);
-    /// D#4/Eb4 (MIDI note 63)
-    pub const DSHARP4: Pitch = Pitch::new(63);
-    /// E4 (MIDI note 64)
-    pub const EFLAT4: Pitch = DSHARP4;
-    /// E4 (MIDI note 64)
-    pub const E4: Pitch = Pitch::new(64);
-    /// F4 (MIDI note 65)
-    pub const F4: Pitch = Pitch::new(65);
-    /// F#4/Gb4 (MIDI note 66)
-    pub const FSHARP4: Pitch = Pitch::new(66);
-    /// G4 (MIDI note 67)
-    pub const GFLAT4: Pitch = FSHARP4;
-    /// G4 (MIDI note 67)
-    pub const G4: Pitch = Pitch::new(67);
-    /// G#4/Ab4 (MIDI note 68)
-    pub const GSHARP4: Pitch = Pitch::new(68);
-    /// A4 (MIDI note 69)
-    pub const AFLAT4: Pitch = GSHARP4;
-    /// A4 (MIDI note 69)
-    pub const A4: Pitch = Pitch::new(69);
-    /// A#4/Bb4 (MIDI note 70)
-    pub const ASHARP4: Pitch = Pitch::new(70);
-    /// B4 (MIDI note 71)
-    pub const BFLAT4: Pitch = ASHARP4;
-    /// B4 (MIDI note 71)
-    pub const B4: Pitch = Pitch::new(71);
+    macro_rules! define_octave {
+        ($octave:expr) => {
+            paste! {
+                // Octave $octave pitches.
 
-    /// C5 (MIDI note 72)
-    pub const C5: Pitch = Pitch::new(72);
+                pub const [<C $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE);
+                pub const [<CSHARP $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 1);
+                pub const [<DFLAT $octave>]: Pitch = [<CSHARP $octave>];
+                pub const [<D $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 2);
+                pub const [<DSHARP $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 3);
+                pub const [<EFLAT $octave>]: Pitch = [<DSHARP $octave>];
+                pub const [<E $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 4);
+                pub const [<F $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 5);
+                pub const [<FSHARP $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 6);
+                pub const [<GFLAT $octave>]: Pitch = [<FSHARP $octave>];
+                pub const [<G $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 7);
+                pub const [<GSHARP $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 8);
+                pub const [<AFLAT $octave>]: Pitch = [<GSHARP $octave>];
+                pub const [<A $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 9);
+                pub const [<ASHARP $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 10);
+                pub const [<BFLAT $octave>]: Pitch = [<ASHARP $octave>];
+                pub const [<B $octave>]: Pitch = Pitch::new(($octave + 1) * crate::core::SEMITONES_IN_OCTAVE + 11);
+            }
+        };
+    }
+
+    // Base octave pitches (C through B)
+    pub const C: Pitch = Pitch::new(0);
+    pub const CSHARP: Pitch = Pitch::new(1);
+    pub const DFLAT: Pitch = CSHARP;
+    pub const D: Pitch = Pitch::new(2);
+    pub const DSHARP: Pitch = Pitch::new(3);
+    pub const EFLAT: Pitch = DSHARP;
+    pub const E: Pitch = Pitch::new(4);
+    pub const F: Pitch = Pitch::new(5);
+    pub const FSHARP: Pitch = Pitch::new(6);
+    pub const GFLAT: Pitch = FSHARP;
+    pub const G: Pitch = Pitch::new(7);
+    pub const GSHARP: Pitch = Pitch::new(8);
+    pub const AFLAT: Pitch = GSHARP;
+    pub const A: Pitch = Pitch::new(9);
+    pub const ASHARP: Pitch = Pitch::new(10);
+    pub const BFLAT: Pitch = ASHARP;
+    pub const B: Pitch = Pitch::new(11);
+
+    define_octave!(0);
+    define_octave!(1);
+    define_octave!(2);
+    define_octave!(3);
+    define_octave!(4);
+    define_octave!(5);
+    define_octave!(6);
+    define_octave!(7);
+    define_octave!(8);
+    define_octave!(9);
 }
 
 #[cfg(test)]

@@ -11,6 +11,9 @@ fn main() {
     println!("  A4 = {} semitones", A4.semitones());
     println!("  B4 = {} semitones", B4.semitones());
 
+    // Other predefined constants
+    println!("  C5 = {} semitones", C5.semitones());
+
     // Using predefined interval constants
     println!("\nPredefined intervals:");
     println!(

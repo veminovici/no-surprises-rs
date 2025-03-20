@@ -10,5 +10,6 @@ keywords = ["reliability", "predictability", "safety"]
 categories = ["algorithms", "data-structures"]
 
 [dependencies]
+paste = "1.0" 
 
 [dev-dependencies]

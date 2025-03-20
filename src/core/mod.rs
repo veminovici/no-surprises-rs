@@ -31,6 +31,8 @@
 //! - Intervals: `PERFECT_UNISON`, `MAJOR_SECOND`, etc.
 //! - Steps: `HALF`, `WHOLE`, etc.
 
+pub(crate) const SEMITONES_IN_OCTAVE: u8 = 12;
+
 pub mod constants;
 
 mod interval;
