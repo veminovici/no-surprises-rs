@@ -65,7 +65,7 @@ pub trait IntoScaleInIntervals<Q: ScaleQuality> {
     /// # Returns
     ///
     /// A scale containing the intervals between scale degrees
-    fn into_scale_in_intervals<const M: usize>(self) -> Scale<Q, Interval, M>;
+    fn into_scale_in_intervals<const M: usize>(&self) -> Scale<Q, Interval, M>;
 }
 
 /// Trait for converting a scale into its step representation
@@ -100,7 +100,7 @@ pub trait IntoScaleInSteps<Q: ScaleQuality> {
     /// # Returns
     ///
     /// A scale containing the steps between scale degrees
-    fn into_scale_in_steps<const M: usize>(self) -> Scale<Q, Step, M>;
+    fn into_scale_in_steps<const M: usize>(&self) -> Scale<Q, Step, M>;
 }
 
 /// Trait for converting a scale into its pitch representation
@@ -138,7 +138,7 @@ pub trait IntoScaleInPitches<Q: ScaleQuality> {
     /// # Returns
     ///
     /// A scale containing the pitches, starting from the root pitch
-    fn into_scale_in_pitches<const M: usize>(self, root: Pitch) -> Scale<Q, Pitch, M>;
+    fn into_scale_in_pitches<const M: usize>(&self, root: Pitch) -> Scale<Q, Pitch, M>;
 }
 
 /// A generic scale type that can represent a scale in any form

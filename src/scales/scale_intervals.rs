@@ -68,7 +68,7 @@ impl<Q: ScaleQuality, const N: usize> IntoScaleInSteps<Q> for ScaleInIntervals<Q
     ///
     /// Panics if M != N (checked via debug_assert)
     #[inline]
-    fn into_scale_in_steps<const M: usize>(self) -> ScaleInSteps<Q, M> {
+    fn into_scale_in_steps<const M: usize>(&self) -> ScaleInSteps<Q, M> {
         debug_assert!(
             M == N,
             "ScaleInIntervals and ScaleInSteps must have the same number of items. We got M={} and N={}",
@@ -103,7 +103,7 @@ impl<Q: ScaleQuality, const N: usize> IntoScaleInPitches<Q> for ScaleInIntervals
     /// # Panics
     ///
     /// Panics if M != N + 1 (checked via debug_assert)
-    fn into_scale_in_pitches<const M: usize>(self, root: Pitch) -> ScaleInPitches<Q, M> {
+    fn into_scale_in_pitches<const M: usize>(&self, root: Pitch) -> ScaleInPitches<Q, M> {
         debug_assert!(
             M == N + 1,
             "ScaleInIntervals has one less item than ScaleInPitches. We got N={} and M={}",
