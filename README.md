@@ -1,6 +1,6 @@
 # no-surprises
 
-[![Rust](https://github.com/yourusername/no-surprises-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/yourusername/no-surprises-rs/actions/workflows/rust.yml)
+[![Rust](https://github.com/veminovici/no-surprises-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/veminovici/no-surprises-rs/actions/workflows/rust.yml)
 
 A Rust library for working with musical scales, intervals, and pitches in a type-safe and predictable way.
 
