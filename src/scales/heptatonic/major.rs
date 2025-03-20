@@ -13,6 +13,7 @@
 use constants::MAJOR_SCALE_IN_INTERVALS;
 
 use crate::Pitch;
+use crate::scales::constants::*;
 use crate::scales::{
     IntoScaleInPitches, ScaleInIntervals, ScaleInPitches, ScaleInSteps, ScaleQuality,
 };
@@ -24,19 +25,12 @@ use crate::scales::{
 pub struct MajorScaleQuality;
 impl ScaleQuality for MajorScaleQuality {}
 
-/// Number of steps in a major scale (excluding the octave)
-const STEPS_LEN: usize = 7;
-/// Number of intervals in a major scale (excluding the octave)
-const INTERVALS_LEN: usize = STEPS_LEN;
-/// Number of pitches in a major scale (including the octave)
-const PITCHES_LEN: usize = STEPS_LEN + 1;
-
 /// Type alias for a major scale represented as steps
-type MajorScaleInSteps = ScaleInSteps<MajorScaleQuality, STEPS_LEN>;
+type MajorScaleInSteps = ScaleInSteps<MajorScaleQuality, MAJOR_SCALE_STEPS_LEN>;
 /// Type alias for a major scale represented as intervals
-type MajorScaleInIntervals = ScaleInIntervals<MajorScaleQuality, INTERVALS_LEN>;
+type MajorScaleInIntervals = ScaleInIntervals<MajorScaleQuality, MAJOR_SCALE_INTERVALS_LEN>;
 /// Type alias for a major scale represented as pitches
-type MajorScaleInPitches = ScaleInPitches<MajorScaleQuality, PITCHES_LEN>;
+type MajorScaleInPitches = ScaleInPitches<MajorScaleQuality, MAJOR_SCALE_PITCHES_LEN>;
 
 /// Creates a major scale starting from the given root pitch.
 ///
@@ -90,12 +84,19 @@ pub(crate) mod constants {
     use crate::Step;
     use crate::prelude::*;
 
+    /// Number of steps in a major scale (excluding the octave)
+    pub const MAJOR_SCALE_STEPS_LEN: usize = 7;
+    /// Number of intervals in a major scale (excluding the octave)
+    pub const MAJOR_SCALE_INTERVALS_LEN: usize = MAJOR_SCALE_STEPS_LEN;
+    /// Number of pitches in a major scale (including the octave)
+    pub const MAJOR_SCALE_PITCHES_LEN: usize = MAJOR_SCALE_STEPS_LEN + 1;
+
     /// The steps pattern for a major scale: whole, whole, half, whole, whole, whole, half
-    pub const MAJOR_SCALE_STEPS: [Step; STEPS_LEN] =
+    pub const MAJOR_SCALE_STEPS: [Step; MAJOR_SCALE_STEPS_LEN] =
         [WHOLE, WHOLE, HALF, WHOLE, WHOLE, WHOLE, HALF];
 
     /// The intervals pattern for a major scale from the root note
-    pub const MAJOR_SCALE_INTERVALS: [Interval; INTERVALS_LEN] = [
+    pub const MAJOR_SCALE_INTERVALS: [Interval; MAJOR_SCALE_INTERVALS_LEN] = [
         MAJOR_SECOND,
         MAJOR_THIRD,
         PERFECT_FOURTH,
@@ -116,7 +117,7 @@ pub(crate) mod constants {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{constants::MAJOR_SCALE_STEPS_LEN, *};
     use crate::prelude::*;
 
     /// Test that the major scale is created correctly from C4
@@ -158,7 +159,7 @@ mod tests {
         let c5_scale = major_scale(C5);
 
         // Compare the relative intervals between notes
-        for i in 0..STEPS_LEN {
+        for i in 0..MAJOR_SCALE_STEPS_LEN {
             let c4_interval = c4_scale.pitches()[i + 1] - c4_scale.pitches()[i];
             let c5_interval = c5_scale.pitches()[i + 1] - c5_scale.pitches()[i];
             assert_eq!(c4_interval, c5_interval);
