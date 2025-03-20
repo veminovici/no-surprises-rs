@@ -13,7 +13,6 @@
 use constants::MAJOR_SCALE_IN_INTERVALS;
 
 use crate::Pitch;
-use crate::scales::constants::*;
 use crate::scales::{
     ScaleInIntervals, ScaleInPitches, ScaleInSteps, ScaleQuality, ToScaleInPitches,
 };
@@ -23,14 +22,25 @@ use crate::scales::{
 /// This type is used to distinguish major scales from other scale types
 /// in the type system.
 pub struct MajorScaleQuality;
-impl ScaleQuality for MajorScaleQuality {}
+impl ScaleQuality for MajorScaleQuality {
+    /// The type alias for a major scale represented as steps
+    type Steps = ScaleInSteps<Self, { Self::STEPS }>;
 
-/// Type alias for a major scale represented as steps
-type MajorScaleInSteps = ScaleInSteps<MajorScaleQuality, MAJOR_SCALE_STEPS_LEN>;
-/// Type alias for a major scale represented as intervals
-type MajorScaleInIntervals = ScaleInIntervals<MajorScaleQuality, MAJOR_SCALE_INTERVALS_LEN>;
-/// Type alias for a major scale represented as pitches
-type MajorScaleInPitches = ScaleInPitches<MajorScaleQuality, MAJOR_SCALE_PITCHES_LEN>;
+    /// The type alias for a major scale represented as intervals
+    type Intervals = ScaleInIntervals<Self, { Self::INTERVALS }>;
+
+    /// The type alias for a major scale represented as pitches
+    type Pitches = ScaleInPitches<Self, { Self::PITCHES }>;
+
+    /// The number of steps in a major scale (excluding the octave)
+    const STEPS: usize = 7;
+
+    /// The number of intervals in a major scale (excluding the octave)
+    const INTERVALS: usize = Self::STEPS;
+
+    /// The number of pitches in a major scale (including the octave)
+    const PITCHES: usize = Self::STEPS + 1;
+}
 
 /// Creates a major scale starting from the given root pitch.
 ///
@@ -51,7 +61,7 @@ type MajorScaleInPitches = ScaleInPitches<MajorScaleQuality, MAJOR_SCALE_PITCHES
 /// let scale = major_scale(C4);
 /// assert_eq!(scale.pitches(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
 /// ```
-pub fn major_scale(root: Pitch) -> MajorScaleInPitches {
+pub fn major_scale(root: Pitch) -> <MajorScaleQuality as ScaleQuality>::Pitches {
     MAJOR_SCALE_IN_INTERVALS.to_scale_in_pitches(root)
 }
 
@@ -75,7 +85,7 @@ pub fn major_scale(root: Pitch) -> MajorScaleInPitches {
 /// let scale = major_scale_in_steps(C4);
 /// assert_eq!(scale.pitches(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
 /// ```
-pub fn major_scale_in_steps(root: Pitch) -> MajorScaleInPitches {
+pub fn major_scale_in_steps(root: Pitch) -> <MajorScaleQuality as ScaleQuality>::Pitches {
     constants::MAJOR_SCALE_IN_STEPS.to_scale_in_pitches(root)
 }
 
@@ -84,19 +94,12 @@ pub(crate) mod constants {
     use crate::Step;
     use crate::prelude::*;
 
-    /// Number of steps in a major scale (excluding the octave)
-    pub const MAJOR_SCALE_STEPS_LEN: usize = 7;
-    /// Number of intervals in a major scale (excluding the octave)
-    pub const MAJOR_SCALE_INTERVALS_LEN: usize = MAJOR_SCALE_STEPS_LEN;
-    /// Number of pitches in a major scale (including the octave)
-    pub const MAJOR_SCALE_PITCHES_LEN: usize = MAJOR_SCALE_STEPS_LEN + 1;
-
     /// The steps pattern for a major scale: whole, whole, half, whole, whole, whole, half
-    pub const MAJOR_SCALE_STEPS: [Step; MAJOR_SCALE_STEPS_LEN] =
+    pub const MAJOR_SCALE_STEPS: [Step; <MajorScaleQuality as ScaleQuality>::STEPS] =
         [WHOLE, WHOLE, HALF, WHOLE, WHOLE, WHOLE, HALF];
 
     /// The intervals pattern for a major scale from the root note
-    pub const MAJOR_SCALE_INTERVALS: [Interval; MAJOR_SCALE_INTERVALS_LEN] = [
+    pub const MAJOR_SCALE_INTERVALS: [Interval; <MajorScaleQuality as ScaleQuality>::INTERVALS] = [
         MAJOR_SECOND,
         MAJOR_THIRD,
         PERFECT_FOURTH,
@@ -107,17 +110,18 @@ pub(crate) mod constants {
     ];
 
     /// A major scale represented as intervals
-    pub const MAJOR_SCALE_IN_INTERVALS: MajorScaleInIntervals =
-        MajorScaleInIntervals::new(MAJOR_SCALE_INTERVALS);
+    pub const MAJOR_SCALE_IN_INTERVALS: <MajorScaleQuality as ScaleQuality>::Intervals =
+        <MajorScaleQuality as ScaleQuality>::Intervals::new(MAJOR_SCALE_INTERVALS);
 
     /// A major scale represented as steps
     #[allow(dead_code)]
-    pub const MAJOR_SCALE_IN_STEPS: MajorScaleInSteps = MajorScaleInSteps::new(MAJOR_SCALE_STEPS);
+    pub const MAJOR_SCALE_IN_STEPS: <MajorScaleQuality as ScaleQuality>::Steps =
+        <MajorScaleQuality as ScaleQuality>::Steps::new(MAJOR_SCALE_STEPS);
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{constants::MAJOR_SCALE_STEPS_LEN, *};
+    use super::*;
     use crate::prelude::*;
 
     /// Test that the major scale is created correctly from C4
@@ -159,7 +163,7 @@ mod tests {
         let c5_scale = major_scale(C5);
 
         // Compare the relative intervals between notes
-        for i in 0..MAJOR_SCALE_STEPS_LEN {
+        for i in 0..MajorScaleQuality::STEPS {
             let c4_interval = c4_scale.pitches()[i + 1] - c4_scale.pitches()[i];
             let c5_interval = c5_scale.pitches()[i + 1] - c5_scale.pitches()[i];
             assert_eq!(c4_interval, c5_interval);

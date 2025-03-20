@@ -34,10 +34,17 @@ impl<Q: ScaleQuality, const N: usize> ScaleInSteps<Q, N> {
     ///
     /// ```rust
     /// use no_surprises::prelude::*;
-    /// use no_surprises::scales::{ScaleInSteps, ScaleQuality};
+    /// use no_surprises::scales::{ScaleInSteps, ScaleInPitches, ScaleInIntervals, ScaleQuality};
     ///
     /// struct MajorScale;
-    /// impl ScaleQuality for MajorScale {}
+    /// impl ScaleQuality for MajorScale {
+    ///    type Steps = ScaleInSteps<Self, { Self::STEPS }>;    
+    ///    type Intervals = ScaleInIntervals<Self, { Self::INTERVALS }>;    
+    ///    type Pitches = ScaleInPitches<Self, { Self::PITCHES }>;
+    ///    const STEPS: usize = 7;
+    ///    const INTERVALS: usize = Self::STEPS;
+    ///    const PITCHES: usize = Self::STEPS + 1;
+    /// }
     ///
     /// let steps = [WHOLE, WHOLE, HALF, WHOLE, WHOLE, WHOLE, HALF];
     /// let scale = ScaleInSteps::<MajorScale, 7>::new(steps);
@@ -124,7 +131,25 @@ mod tests {
 
     /// A test scale quality for testing scale operations
     struct TestScaleQuality;
-    impl ScaleQuality for TestScaleQuality {}
+    impl ScaleQuality for TestScaleQuality {
+        /// The type alias for a major scale represented as steps
+        type Steps = ScaleInSteps<Self, { Self::STEPS }>;
+
+        /// The type alias for a major scale represented as intervals
+        type Intervals = ScaleInIntervals<Self, { Self::INTERVALS }>;
+
+        /// The type alias for a major scale represented as pitches
+        type Pitches = ScaleInPitches<Self, { Self::PITCHES }>;
+
+        /// The number of steps in a major scale (excluding the octave)
+        const STEPS: usize = 3;
+
+        /// The number of intervals in a major scale (excluding the octave)
+        const INTERVALS: usize = Self::STEPS;
+
+        /// The number of pitches in a major scale (including the octave)
+        const PITCHES: usize = Self::STEPS + 1;
+    }
 
     #[test]
     fn test_steps_accessor() {
