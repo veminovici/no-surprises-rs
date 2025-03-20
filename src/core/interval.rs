@@ -89,10 +89,28 @@ impl<const N: usize> IntoPitches for [Interval; N] {
     }
 }
 
+pub(crate) mod constants {
+    use super::Interval;
+
+    pub const PERFECT_UNISON: Interval = Interval::new(0);
+    pub const MINOR_SECOND: Interval = Interval::new(1);
+    pub const MAJOR_SECOND: Interval = Interval::new(2);
+    pub const MINOR_THIRD: Interval = Interval::new(3);
+    pub const MAJOR_THIRD: Interval = Interval::new(4);
+    pub const PERFECT_FOURTH: Interval = Interval::new(5);
+    pub const AUGMENTED_FOURTH: Interval = Interval::new(6);
+    pub const DIMINISHED_FIFTH: Interval = Interval::new(6);
+    pub const PERFECT_FIFTH: Interval = Interval::new(7);
+    pub const MINOR_SIXTH: Interval = Interval::new(8);
+    pub const MAJOR_SIXTH: Interval = Interval::new(9);
+    pub const MINOR_SEVENTH: Interval = Interval::new(10);
+    pub const MAJOR_SEVENTH: Interval = Interval::new(11);
+    pub const PERFECT_OCTAVE: Interval = Interval::new(12);
+}
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_into_steps() {
         let intervals = [Interval::new(2), Interval::new(5), Interval::new(9)];
@@ -104,6 +122,14 @@ mod tests {
     fn test_into_pitches() {
         let intervals = [Interval::new(2), Interval::new(5), Interval::new(9)];
         let pitches = intervals.into_pitches(Pitch::new(60));
-        assert_eq!(pitches, [Pitch::new(60), Pitch::new(62), Pitch::new(65), Pitch::new(69)]);
+        assert_eq!(
+            pitches,
+            [
+                Pitch::new(60),
+                Pitch::new(62),
+                Pitch::new(65),
+                Pitch::new(69)
+            ]
+        );
     }
 }

@@ -1,6 +1,6 @@
 use super::{Interval, IntoIntervals, IntoPitches, Pitch};
 
-#[derive(Debug,Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Step(u8);
 
 impl Step {
@@ -87,24 +87,34 @@ pub(crate) mod constants {
 
     pub const SEMITONE: Step = Step::new(1);
     pub const TONE: Step = Step::new(2);
-}    
-    
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_into_intervals() {
         let steps = [Step::new(2), Step::new(3), Step::new(4)];
         let intervals = steps.into_intervals();
-        assert_eq!(intervals, [Interval::new(2), Interval::new(5), Interval::new(9)]);
+        assert_eq!(
+            intervals,
+            [Interval::new(2), Interval::new(5), Interval::new(9)]
+        );
     }
 
     #[test]
     fn test_into_pitches() {
         let steps = [Step::new(2), Step::new(3), Step::new(4)];
         let pitches = steps.into_pitches(Pitch::new(60));
-        assert_eq!(pitches, [Pitch::new(60), Pitch::new(62), Pitch::new(65), Pitch::new(69)]);
+        assert_eq!(
+            pitches,
+            [
+                Pitch::new(60),
+                Pitch::new(62),
+                Pitch::new(65),
+                Pitch::new(69)
+            ]
+        );
     }
 }
