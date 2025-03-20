@@ -26,21 +26,30 @@ impl Pitch {
     }
 }
 
-impl Sub for Pitch {
-    type Output = Step;
-
-    #[inline]
-    fn sub(self, other: Self) -> Self::Output {
-        Step::new(self.0 - other.0)
-    }
-}
-
 impl Add<Step> for Pitch {
     type Output = Self;
 
     #[inline]
     fn add(self, step: Step) -> Self::Output {
         Self(self.0 + step.semitones())
+    }
+}
+
+impl Sub<Step> for Pitch {
+    type Output = Self;
+
+    #[inline]
+    fn sub(self, step: Step) -> Self::Output {
+        Self(self.0 - step.semitones())
+    }
+}
+
+impl Sub for Pitch {
+    type Output = Step;
+
+    #[inline]
+    fn sub(self, other: Self) -> Self::Output {
+        Step::new(self.0 - other.0)
     }
 }
 

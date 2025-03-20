@@ -42,12 +42,21 @@ impl Add<Step> for Interval {
     }
 }
 
-impl Sub<Interval> for Interval {
+impl Sub<Step> for Interval {
     type Output = Self;
 
     #[inline]
+    fn sub(self, step: Step) -> Self::Output {
+        Self(self.0 - step.semitones())
+    }
+}
+
+impl Sub for Interval {
+    type Output = Step;
+
+    #[inline]
     fn sub(self, other: Self) -> Self::Output {
-        Self(self.0 - other.0)
+        Step::new(self.0 - other.0)
     }
 }
 
@@ -56,7 +65,7 @@ impl<const N: usize> IntoSteps for [Interval; N] {
         debug_assert!(M == N);
 
         let scan_state = |last: &mut Option<Interval>, item: Interval| -> Option<Step> {
-            let step = last.map_or(Step::from(item), |prev| Step::from(item - prev));
+            let step = last.map_or(Step::from(item), |prev| item - prev);
             *last = Some(item);
             Some(step)
         };

@@ -13,19 +13,31 @@ fn main() {
 
     // Using predefined interval constants
     println!("\nPredefined intervals:");
-    println!("  Perfect Unison = {} semitones", PERFECT_UNISON.semitones());
+    println!(
+        "  Perfect Unison = {} semitones",
+        PERFECT_UNISON.semitones()
+    );
     println!("  Major Second = {} semitones", MAJOR_SECOND.semitones());
     println!("  Major Third = {} semitones", MAJOR_THIRD.semitones());
-    println!("  Perfect Fourth = {} semitones", PERFECT_FOURTH.semitones());
+    println!(
+        "  Perfect Fourth = {} semitones",
+        PERFECT_FOURTH.semitones()
+    );
     println!("  Perfect Fifth = {} semitones", PERFECT_FIFTH.semitones());
     println!("  Major Sixth = {} semitones", MAJOR_SIXTH.semitones());
     println!("  Major Seventh = {} semitones", MAJOR_SEVENTH.semitones());
-    println!("  Perfect Octave = {} semitones", PERFECT_OCTAVE.semitones());
+    println!(
+        "  Perfect Octave = {} semitones",
+        PERFECT_OCTAVE.semitones()
+    );
 
     // Using predefined step constants
     println!("\nPredefined steps:");
     println!("  Unison = {} semitones", UNISON.semitones());
     println!("  Half Step = {} semitones", HALF.semitones());
     println!("  Whole Step = {} semitones", WHOLE.semitones());
-    println!("  Whole and Half Step = {} semitones", WHOLE_AND_HALF.semitones());
-} 
+    println!(
+        "  Whole and Half Step = {} semitones",
+        WHOLE_AND_HALF.semitones()
+    );
+}
