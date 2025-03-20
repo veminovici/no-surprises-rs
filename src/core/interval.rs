@@ -1,5 +1,7 @@
 use std::ops::{Add, Sub};
 
+use crate::PERFECT_UNISON;
+
 use super::{IntoPitches, IntoSteps, Pitch, Step};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -20,7 +22,7 @@ impl Interval {
 impl Default for Interval {
     #[inline]
     fn default() -> Self {
-        Self(0)
+        PERFECT_UNISON
     }
 }
 

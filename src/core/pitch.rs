@@ -1,5 +1,7 @@
 use std::ops::{Add, Sub};
 
+use crate::C4;
+
 use super::{Interval, IntoIntervals, IntoSteps, Step};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -8,7 +10,7 @@ pub struct Pitch(u8);
 impl Default for Pitch {
     #[inline]
     fn default() -> Self {
-        Self(60)
+        C4
     }
 }
 

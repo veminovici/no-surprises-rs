@@ -1,3 +1,5 @@
+use crate::UNISON;
+
 use super::{Interval, IntoIntervals, IntoPitches, Pitch};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -18,7 +20,7 @@ impl Step {
 impl Default for Step {
     #[inline]
     fn default() -> Self {
-        Self(0)
+        UNISON
     }
 }
 
