@@ -7,7 +7,7 @@ A Rust library for working with musical scales, intervals, and pitches in a type
 ## Overview
 
 `no-surprises` provides a comprehensive set of tools for working with musical concepts in Rust. It offers type-safe abstractions for:
-- Musical scales (including built-in support for common scales like major)
+- Musical scales (including built-in support for common scales like major and natural minor)
 - Intervals
 - Pitches
 - Steps
@@ -18,7 +18,9 @@ The library is designed to prevent common musical theory errors at compile time 
 
 - Type-safe musical scale definitions
 - Multiple scale representations (intervals, steps, pitches)
-- Built-in support for common scales (major, etc.)
+- Built-in support for common scales:
+  - Major scale
+  - Natural minor scale
 - Interval calculations and transformations
 - Pitch manipulation and transposition
 - Step-based scale navigation
@@ -38,16 +40,21 @@ no-surprises = "0.1.0"
 ```rust
 use no_surprises::prelude::*;
 use no_surprises::scales::major_scale;
+use no_surprises::scales::naturalminor_scale;
 
 // Create a major scale starting from C4
-let scale = major_scale(C4);
-assert_eq!(scale.pitches(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
+let major_scale = major_scale(C4);
+assert_eq!(major_scale.pitches(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
+
+// Create a natural minor scale starting from A4
+let minor_scale = naturalminor_scale(A4);
+assert_eq!(minor_scale.pitches(), &[A4, B4, C5, D5, E5, F5, G5, A5]);
 
 // Convert between scale representations
-let steps = scale.to_scale_in_steps();
+let steps = major_scale.to_scale_in_steps();
 assert_eq!(steps.steps(), &[WHOLE, WHOLE, HALF, WHOLE, WHOLE, WHOLE, HALF]);
 
-let intervals = scale.to_scale_in_intervals();
+let intervals = major_scale.to_scale_in_intervals();
 assert_eq!(intervals.intervals(), &[
     MAJOR_SECOND,
     MAJOR_THIRD,
@@ -95,9 +102,6 @@ cargo run --example 03_slice_operations
 
 # Run the scale operations example
 cargo run --example 04_basic_scales
-
-# Run the major scale example
-cargo run --example 05_major_scale
 ```
 
 Each example demonstrates different aspects of the library:
@@ -105,7 +109,6 @@ Each example demonstrates different aspects of the library:
 - `02_operations`: Shows various operations like adding steps to pitches and calculating distances
 - `03_slice_operations`: Demonstrates working with slices of musical elements
 - `04_basic_scales`: Shows various operations like transforming from scales based on steps to ones based on intervals
-- `05_major_scale`: Demonstrates working with the built-in major scale implementation
 
 ## Contributing
 
