@@ -77,113 +77,171 @@ impl<Q: ScaleQuality, T, const N: usize> Scale<Q, T, N> {
 
 use paste::paste;
 
-/// Macro for defining a new scale type with all its representations and conversions
+/// Macro for defining the quality struct and its implementation
+macro_rules! define_scale_quality {
+    ($name:ident, $steps:expr) => {
+        paste! {
+            #[derive(Debug, PartialEq, Eq)]
+            pub struct [<$name Quality>];
+
+            impl ScaleQuality for [<$name Quality>] {
+                const STEPS_LENGTH: usize = 7;
+                type Pattern = [Step; Self::STEPS_LENGTH];
+                const STEPS_PATTERN: Self::Pattern = $steps;
+            }
+        }
+    };
+}
+
+/// Macro for defining type aliases for different scale representations
+macro_rules! define_scale_types {
+    ($name:ident) => {
+        paste! {
+            pub type [<$name ScaleSteps>] = Scale<[<$name Quality>], Step, { [<$name Quality>]::STEPS_LENGTH }>;
+            pub type [<$name ScaleIntervals>] = Scale<[<$name Quality>], Interval, { [<$name Quality>]::STEPS_LENGTH }>;
+            pub type [<$name ScalePitches>] = Scale<[<$name Quality>], Pitch, { [<$name Quality>]::PITCHES_LENGTH }>;
+        }
+    };
+}
+
+/// Macro for implementing scale step operations
+macro_rules! impl_scale_steps {
+    ($name:ident) => {
+        paste! {
+            impl [<$name ScaleSteps>] {
+                #[inline]
+                pub const fn steps(&self) -> &[Step; { [<$name Quality>]::STEPS_LENGTH }] {
+                    &self.items
+                }
+
+                #[inline]
+                pub fn to_intervals(&self) -> [<$name ScaleIntervals>] {
+                    [<$name ScaleIntervals>]::new(self.items.into_intervals())
+                }
+
+                #[inline]
+                pub fn to_pitches(&self) -> [<$name ScalePitches>] {
+                    [<$name ScalePitches>]::new(self.items.into_pitches(C4))
+                }
+            }
+        }
+    };
+}
+
+/// Macro for implementing scale interval operations
+macro_rules! impl_scale_intervals {
+    ($name:ident) => {
+        paste! {
+            impl [<$name ScaleIntervals>] {
+                #[inline]
+                pub const fn intervals(&self) -> &[Interval; { [<$name Quality>]::STEPS_LENGTH }] {
+                    &self.items
+                }
+
+                #[inline]
+                pub fn to_steps(&self) -> [<$name ScaleSteps>] {
+                    [<$name ScaleSteps>]::new(self.items.into_steps())
+                }
+
+                #[inline]
+                pub fn to_pitches(&self) -> [<$name ScalePitches>] {
+                    [<$name ScalePitches>]::new(self.items.into_pitches(C4))
+                }
+            }
+        }
+    };
+}
+
+/// Macro for implementing scale pitch operations
+macro_rules! impl_scale_pitches {
+    ($name:ident) => {
+        paste! {
+            impl [<$name ScalePitches>] {
+                #[inline]
+                pub const fn pitches(&self) -> &[Pitch; { [<$name Quality>]::PITCHES_LENGTH }] {
+                    &self.items
+                }
+
+                #[inline]
+                pub fn to_steps(&self) -> [<$name ScaleSteps>] {
+                    [<$name ScaleSteps>]::new(self.items.into_steps())
+                }
+
+                #[inline]
+                pub fn to_intervals(&self) -> [<$name ScaleIntervals>] {
+                    [<$name ScaleIntervals>]::new(self.items.into_intervals())
+                }
+            }
+        }
+    };
+}
+
+/// Macro for defining scale helper functions
+macro_rules! define_scale_functions {
+    ($name:ident) => {
+        paste! {
+            #[inline]
+            pub fn [<$name:lower _scale_in_steps>]() -> [<$name ScaleSteps>] {
+                [<$name ScaleSteps>]::new([<$name Quality>]::STEPS_PATTERN)
+            }
+
+            #[inline]
+            pub fn [<$name:lower _scale_in_intervals>]() -> [<$name ScaleIntervals>] {
+                [<$name ScaleIntervals>]::new([<$name Quality>]::STEPS_PATTERN.into_intervals())
+            }
+
+            #[inline]
+            pub fn [<$name:lower _scale_in_pitches>](root: Pitch) -> [<$name ScalePitches>] {
+                [<$name ScalePitches>]::new([<$name Quality>]::STEPS_PATTERN.into_pitches(root))
+            }
+
+            #[inline]
+            pub fn [<$name:lower _scale>](root: Pitch) -> [<$name ScalePitches>] {
+                [<$name ScalePitches>]::new([<$name Quality>]::STEPS_PATTERN.into_pitches(root))
+            }
+        }
+    };
+}
+
+/// Macro for defining scale constants
+macro_rules! define_scale_constants {
+    ($name:ident) => {
+        paste! {
+            pub(crate) mod constants {
+                use super::*;
+
+                pub const [<$name:upper _SCALE_STEPS>]: [Step; [<$name Quality>]::STEPS_LENGTH] = [<$name Quality>]::STEPS_PATTERN;
+            }
+        }
+    };
+}
+
+/// Main macro for defining a new scale type with all its representations and conversions
 ///
-/// This macro generates:
-/// - A quality struct (e.g., MajorQuality)
-/// - Type aliases for different representations (steps, intervals, pitches)
-/// - Implementations for converting between representations
-/// - Helper functions for creating scales in different forms
+/// This macro combines all the smaller macros to generate a complete scale implementation:
+/// - Scale quality and implementation
+/// - Type aliases for different representations
+/// - Conversion implementations
+/// - Helper functions
+/// - Constants
 ///
 /// # Arguments
 /// - `$name`: The name of the scale (e.g., major)
 /// - `$steps`: The step pattern defining the scale
 macro_rules! define_scale {
-     ($name:ident, $steps:expr) => {
+    ($name:ident, $steps:expr) => {
         paste! {
             pub mod [<$name:lower>] {
                 use crate::scales::*;
                 use crate::prelude::*;
 
-                #[derive(Debug, PartialEq, Eq)]
-                pub struct [<$name Quality>];
-
-                impl ScaleQuality for [<$name Quality>] {
-                    const STEPS_LENGTH: usize = 7;
-                    type Pattern = [Step; Self::STEPS_LENGTH];
-                    const STEPS_PATTERN: Self::Pattern = $steps;
-                }
-
-                pub type [<$name ScaleSteps>] = Scale<[<$name Quality>], Step, { [<$name Quality>]::STEPS_LENGTH }>;
-                pub type [<$name ScaleIntervals>] = Scale<[<$name Quality>], Interval, { [<$name Quality>]::STEPS_LENGTH }>;
-                pub type [<$name ScalePitches>] = Scale<[<$name Quality>], Pitch, { [<$name Quality>]::PITCHES_LENGTH }>;
-
-                impl [<$name ScaleSteps>] {
-                    #[inline]
-                    pub const fn steps(&self) -> &[Step; { [<$name Quality>]::STEPS_LENGTH }] {
-                        &self.items
-                    }
-
-                    #[inline]
-                    pub fn to_intervals(&self) -> [<$name ScaleIntervals>] {
-                        [<$name ScaleIntervals>]::new(self.items.into_intervals())
-                    }
-
-                    #[inline]
-                    pub fn to_pitches(&self) -> [<$name ScalePitches>] {
-                        [<$name ScalePitches>]::new(self.items.into_pitches(C4))
-                    }
-                }
-
-                impl [<$name ScaleIntervals>] {
-                    #[inline]
-                    pub const fn intervals(&self) -> &[Interval; { [<$name Quality>]::STEPS_LENGTH }] {
-                        &self.items
-                    }
-
-                    #[inline]
-                    pub fn to_steps(&self) -> [<$name ScaleSteps>] {
-                        [<$name ScaleSteps>]::new(self.items.into_steps())
-                    }
-
-                    #[inline]
-                    pub fn to_pitches(&self) -> [<$name ScalePitches>] {
-                        [<$name ScalePitches>]::new(self.items.into_pitches(C4))
-                    }
-                }
-
-                impl [<$name ScalePitches>] {
-                    #[inline]
-                    pub const fn pitches(&self) -> &[Pitch; { [<$name Quality>]::PITCHES_LENGTH }] {
-                        &self.items
-                    }
-
-                    #[inline]
-                    pub fn to_steps(&self) -> [<$name ScaleSteps>] {
-                        [<$name ScaleSteps>]::new(self.items.into_steps())
-                    }
-
-                    #[inline]
-                    pub fn to_intervals(&self) -> [<$name ScaleIntervals>] {
-                        [<$name ScaleIntervals>]::new(self.items.into_intervals())
-                    }
-                }
-
-                #[inline]
-                pub fn [<$name:lower _scale_in_steps>]() -> [<$name ScaleSteps>] {
-                    [<$name ScaleSteps>]::new([<$name Quality>]::STEPS_PATTERN)
-                }
-
-                #[inline]
-                pub fn [<$name:lower _scale_in_intervals>]() -> [<$name ScaleIntervals>] {
-                    [<$name ScaleIntervals>]::new([<$name Quality>]::STEPS_PATTERN.into_intervals())
-                }
-
-                #[inline]
-                pub fn [<$name:lower _scale_in_pitches>](root: Pitch) -> [<$name ScalePitches>] {
-                    [<$name ScalePitches>]::new([<$name Quality>]::STEPS_PATTERN.into_pitches(root))
-                }
-
-                #[inline]
-                pub fn [<$name:lower _scale>](root: Pitch) -> [<$name ScalePitches>] {
-                    [<$name ScalePitches>]::new([<$name Quality>]::STEPS_PATTERN.into_pitches(root))
-                }
-
-                pub(crate)mod constants {
-                    use super::*;
-
-                    pub const [<$name:upper _SCALE_STEPS>]: [Step; [<$name Quality>]::STEPS_LENGTH] = [<$name Quality>]::STEPS_PATTERN;
-                }
+                define_scale_quality!($name, $steps);
+                define_scale_types!($name);
+                impl_scale_steps!($name);
+                impl_scale_intervals!($name);
+                impl_scale_pitches!($name);
+                define_scale_functions!($name);
+                define_scale_constants!($name);
             }
         }
     };
