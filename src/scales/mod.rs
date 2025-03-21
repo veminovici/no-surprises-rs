@@ -11,168 +11,34 @@
 //! - Steps: [WHOLE, WHOLE, HALF, WHOLE, WHOLE, WHOLE, HALF]
 //! - Pitches: [C4, D4, E4, F4, G4, A4, B4, C5] (when starting from C4)
 //!
-//! The module provides implementations for common scales (like major) and allows creating
+//! The module provides implementations for common scales through the heptatonic module,
+//! which includes 7-note scales like major and natural minor. The module allows creating
 //! custom scales by implementing the appropriate traits.
 
+use crate::{Interval, Pitch, Step};
 use std::marker::PhantomData;
 
-use crate::{Interval, Pitch, Step};
-
-/// Marker trait for scale qualities (e.g., major, minor, pentatonic)
+/// Trait defining the quality of a scale (e.g., major, minor)
 ///
-/// This trait is used to distinguish between different types of scales
-/// while maintaining type safety. Implementations can add additional
-/// functionality specific to certain scale qualities.
-///
-/// # Examples
-///
-/// ```
-/// use no_surprises::scales::{ScaleQuality, MajorScaleQuality};
-///
-/// // MajorScaleQuality implements ScaleQuality
-/// let _quality: &dyn ScaleQuality = &MajorScaleQuality;
-/// ```
-pub trait ScaleQuality {}
-
-/// Trait for converting a scale into its interval representation
-///
-/// This trait allows converting a scale from any representation (steps or pitches)
-/// into a sequence of intervals. The intervals represent the distances between
-/// consecutive scale degrees.
-///
-/// # Type Parameters
-///
-/// * `Q` - The scale quality (e.g., major, minor)
-///
-/// # Examples
-///
-/// ```
-/// use no_surprises::scales::{ToScaleInIntervals, ToScaleInSteps, ScaleInSteps, major_scale};
-/// use no_surprises::prelude::*;
-/// use no_surprises::scales::constants::*;
-///
-/// let steps = major_scale(C4).to_scale_in_steps::<7>();
-/// let scale = steps.to_scale_in_intervals::<7>();
-/// assert_eq!(scale.intervals(), &MAJOR_SCALE_INTERVALS);
-/// ```
-pub trait ToScaleInIntervals<Q: ScaleQuality> {
-    /// Converts the scale into a sequence of intervals
-    ///
-    /// # Type Parameters
-    ///
-    /// * `M` - The number of intervals in the resulting scale
-    ///
-    /// # Returns
-    ///
-    /// A scale containing the intervals between scale degrees
-    fn to_scale_in_intervals<const M: usize>(&self) -> Scale<Q, Interval, M>;
+/// This trait provides the core properties of a scale:
+/// - `STEPS_LENGTH`: Number of steps in the scale pattern
+/// - `PITCHES_LENGTH`: Number of pitches (always steps + 1)
+/// - `Pattern`: Type of the step pattern
+/// - `STEPS_PATTERN`: The actual step pattern defining the scale
+pub trait ScaleQuality {
+    const STEPS_LENGTH: usize;
+    const PITCHES_LENGTH: usize = Self::STEPS_LENGTH + 1;
+    type Pattern: AsRef<[Step]>;
+    const STEPS_PATTERN: Self::Pattern;
 }
 
-/// Trait for converting a scale into its step representation
-///
-/// This trait allows converting a scale from any representation (intervals or pitches)
-/// into a sequence of steps. The steps represent the smallest units of movement
-/// between consecutive scale degrees.
+/// Generic scale type that can represent a scale in any form (intervals, steps, or pitches)
 ///
 /// # Type Parameters
-///
-/// * `Q` - The scale quality (e.g., major, minor)
-///
-/// # Examples
-///
-/// ```
-/// use no_surprises::scales::{ToScaleInSteps, ScaleInIntervals, ToScaleInIntervals, major_scale};
-/// use no_surprises::prelude::*;
-/// use no_surprises::scales::constants::*;
-///
-/// let scale = major_scale(C4).to_scale_in_intervals::<7>();
-/// let scale = scale.to_scale_in_steps::<7>();
-///
-/// assert_eq!(scale.steps(), &MAJOR_SCALE_STEPS);
-/// ```
-pub trait ToScaleInSteps<Q: ScaleQuality> {
-    /// Converts the scale into a sequence of steps
-    ///
-    /// # Type Parameters
-    ///
-    /// * `M` - The number of steps in the resulting scale
-    ///
-    /// # Returns
-    ///
-    /// A scale containing the steps between scale degrees
-    fn to_scale_in_steps<const M: usize>(&self) -> Scale<Q, Step, M>;
-}
-
-/// Trait for converting a scale into its pitch representation
-///
-/// This trait allows converting a scale from any representation (intervals or steps)
-/// into a sequence of pitches. The pitches represent the actual notes in the scale,
-/// starting from a given root pitch.
-///
-/// # Type Parameters
-///
-/// * `Q` - The scale quality (e.g., major, minor)
-///
-/// # Examples
-///
-/// ```
-/// use no_surprises::scales::{ToScaleInPitches, ToScaleInSteps, ScaleInSteps, major_scale};
-/// use no_surprises::prelude::*;
-/// use no_surprises::scales::constants::*;
-///
-/// let steps = major_scale(C4).to_scale_in_steps::<7>();
-/// let pitches = steps.to_scale_in_pitches::<8>(C4);
-/// assert_eq!(pitches.items(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
-/// ```
-pub trait ToScaleInPitches<Q: ScaleQuality> {
-    /// Converts the scale into a sequence of pitches
-    ///
-    /// # Type Parameters
-    ///
-    /// * `M` - The number of pitches in the resulting scale
-    ///
-    /// # Arguments
-    ///
-    /// * `root` - The root pitch to start the scale from
-    ///
-    /// # Returns
-    ///
-    /// A scale containing the pitches, starting from the root pitch
-    fn to_scale_in_pitches<const M: usize>(&self, root: Pitch) -> Scale<Q, Pitch, M>;
-}
-
-/// A generic scale type that can represent a scale in any form
-///
-/// This struct provides a unified way to work with scales in different
-/// representations (intervals, steps, or pitches) while maintaining type
-/// safety through the `ScaleQuality` marker trait.
-///
-/// # Type Parameters
-///
-/// * `Q` - The scale quality (e.g., major, minor)
-/// * `T` - The type of elements in the scale (Interval, Step, or Pitch)
-/// * `N` - The number of elements in the scale
-///
-/// # Examples
-///
-/// ```
-/// use no_surprises::scales::{Scale, MajorScaleQuality, major_scale, ToScaleInSteps, ToScaleInIntervals};
-/// use no_surprises::scales::constants::*;
-/// use no_surprises::prelude::*;
-///
-/// // Create a scale with intervals
-/// let scale = major_scale(C4).to_scale_in_intervals();
-/// assert_eq!(scale.intervals(), &MAJOR_SCALE_INTERVALS);
-///
-/// // Create a scale with steps
-/// let scale = major_scale(C4).to_scale_in_steps();
-/// assert_eq!(scale.steps(), &MAJOR_SCALE_STEPS);
-///
-/// // Create a scale with pitches
-/// let scale = major_scale(C4);
-/// assert_eq!(scale.pitches(), &[C4, D4, E4, F4, G4, A4, B4, C5]);
-/// ```
-#[derive(Debug)]
+/// - `Q`: The scale quality (e.g., major, minor)
+/// - `T`: The type of elements (Interval, Step, or Pitch)
+/// - `N`: The number of elements in the scale
+#[derive(Debug, PartialEq, Eq)]
 pub struct Scale<Q: ScaleQuality, T, const N: usize> {
     /// Phantom data to maintain the scale quality type parameter
     quality: PhantomData<Q>,
@@ -191,7 +57,7 @@ impl<Q: ScaleQuality, T, const N: usize> Scale<Q, T, N> {
     ///
     /// A new scale containing the given elements
     #[inline]
-    pub const fn new(items: [T; N]) -> Self {
+    pub(crate) const fn new(items: [T; N]) -> Self {
         Self {
             items,
             quality: PhantomData,
@@ -209,15 +75,124 @@ impl<Q: ScaleQuality, T, const N: usize> Scale<Q, T, N> {
     }
 }
 
+use paste::paste;
+
+/// Macro for defining a new scale type with all its representations and conversions
+///
+/// This macro generates:
+/// - A quality struct (e.g., MajorQuality)
+/// - Type aliases for different representations (steps, intervals, pitches)
+/// - Implementations for converting between representations
+/// - Helper functions for creating scales in different forms
+///
+/// # Arguments
+/// - `$name`: The name of the scale (e.g., major)
+/// - `$steps`: The step pattern defining the scale
+macro_rules! define_scale {
+     ($name:ident, $steps:expr) => {
+        paste! {
+            pub mod [<$name:lower>] {
+                use crate::scales::*;
+                use crate::prelude::*;
+
+                #[derive(Debug, PartialEq, Eq)]
+                pub struct [<$name Quality>];
+
+                impl ScaleQuality for [<$name Quality>] {
+                    const STEPS_LENGTH: usize = 7;
+                    type Pattern = [Step; Self::STEPS_LENGTH];
+                    const STEPS_PATTERN: Self::Pattern = $steps;
+                }
+
+                pub type [<$name ScaleSteps>] = Scale<[<$name Quality>], Step, { [<$name Quality>]::STEPS_LENGTH }>;
+                pub type [<$name ScaleIntervals>] = Scale<[<$name Quality>], Interval, { [<$name Quality>]::STEPS_LENGTH }>;
+                pub type [<$name ScalePitches>] = Scale<[<$name Quality>], Pitch, { [<$name Quality>]::PITCHES_LENGTH }>;
+
+                impl [<$name ScaleSteps>] {
+                    #[inline]
+                    pub const fn steps(&self) -> &[Step; { [<$name Quality>]::STEPS_LENGTH }] {
+                        &self.items
+                    }
+
+                    #[inline]
+                    pub fn to_intervals(&self) -> [<$name ScaleIntervals>] {
+                        [<$name ScaleIntervals>]::new(self.items.into_intervals())
+                    }
+
+                    #[inline]
+                    pub fn to_pitches(&self) -> [<$name ScalePitches>] {
+                        [<$name ScalePitches>]::new(self.items.into_pitches(C4))
+                    }
+                }
+
+                impl [<$name ScaleIntervals>] {
+                    #[inline]
+                    pub const fn intervals(&self) -> &[Interval; { [<$name Quality>]::STEPS_LENGTH }] {
+                        &self.items
+                    }
+
+                    #[inline]
+                    pub fn to_steps(&self) -> [<$name ScaleSteps>] {
+                        [<$name ScaleSteps>]::new(self.items.into_steps())
+                    }
+
+                    #[inline]
+                    pub fn to_pitches(&self) -> [<$name ScalePitches>] {
+                        [<$name ScalePitches>]::new(self.items.into_pitches(C4))
+                    }
+                }
+
+                impl [<$name ScalePitches>] {
+                    #[inline]
+                    pub const fn pitches(&self) -> &[Pitch; { [<$name Quality>]::PITCHES_LENGTH }] {
+                        &self.items
+                    }
+
+                    #[inline]
+                    pub fn to_steps(&self) -> [<$name ScaleSteps>] {
+                        [<$name ScaleSteps>]::new(self.items.into_steps())
+                    }
+
+                    #[inline]
+                    pub fn to_intervals(&self) -> [<$name ScaleIntervals>] {
+                        [<$name ScaleIntervals>]::new(self.items.into_intervals())
+                    }
+                }
+
+                #[inline]
+                pub fn [<$name:lower _scale_in_steps>]() -> [<$name ScaleSteps>] {
+                    [<$name ScaleSteps>]::new([<$name Quality>]::STEPS_PATTERN)
+                }
+
+                #[inline]
+                pub fn [<$name:lower _scale_in_intervals>]() -> [<$name ScaleIntervals>] {
+                    [<$name ScaleIntervals>]::new([<$name Quality>]::STEPS_PATTERN.into_intervals())
+                }
+
+                #[inline]
+                pub fn [<$name:lower _scale_in_pitches>](root: Pitch) -> [<$name ScalePitches>] {
+                    [<$name ScalePitches>]::new([<$name Quality>]::STEPS_PATTERN.into_pitches(root))
+                }
+
+                #[inline]
+                pub fn [<$name:lower _scale>](root: Pitch) -> [<$name ScalePitches>] {
+                    [<$name ScalePitches>]::new([<$name Quality>]::STEPS_PATTERN.into_pitches(root))
+                }
+
+                pub(crate)mod constants {
+                    use super::*;
+
+                    pub const [<$name:upper _SCALE_STEPS>]: [Step; [<$name Quality>]::STEPS_LENGTH] = [<$name Quality>]::STEPS_PATTERN;
+                }
+            }
+        }
+    };
+}
+
 pub mod constants;
 
-mod heptatonic;
+// Module for heptatonic scales (7-note scales)
+pub mod heptatonic;
 
-mod scale_intervals;
-mod scale_pitches;
-mod scale_steps;
-
+// Re-export heptatonic scales
 pub use heptatonic::*;
-pub use scale_intervals::*;
-pub use scale_pitches::*;
-pub use scale_steps::*;
