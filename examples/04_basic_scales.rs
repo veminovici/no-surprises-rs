@@ -3,25 +3,7 @@ use no_surprises::scales::*;
 
 #[derive(Debug)]
 struct MyScaleQuality;
-impl ScaleQuality for MyScaleQuality {
-    /// The type alias for a major scale represented as steps
-    type Steps = ScaleInSteps<Self, { Self::STEPS }>;
-
-    /// The type alias for a major scale represented as intervals
-    type Intervals = ScaleInIntervals<Self, { Self::INTERVALS }>;
-
-    /// The type alias for a major scale represented as pitches
-    type Pitches = ScaleInPitches<Self, { Self::PITCHES }>;
-
-    /// The number of steps in a major scale (excluding the octave)
-    const STEPS: usize = 3;
-
-    /// The number of intervals in a major scale (excluding the octave)
-    const INTERVALS: usize = Self::STEPS;
-
-    /// The number of pitches in a major scale (including the octave)
-    const PITCHES: usize = Self::STEPS + 1;
-}
+impl ScaleQuality for MyScaleQuality {}
 
 fn main() {
     let scale_in_steps = ScaleInSteps::<MyScaleQuality, 3>::new([WHOLE, HALF, HALF]);

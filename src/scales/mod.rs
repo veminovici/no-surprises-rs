@@ -24,37 +24,15 @@ use crate::{Interval, Pitch, Step};
 /// while maintaining type safety. Implementations can add additional
 /// functionality specific to certain scale qualities.
 ///
-/// # Associated Types
-///
-/// * `Steps` - The type alias for a scale represented as steps
-/// * `Intervals` - The type alias for a scale represented as intervals
-/// * `Pitches` - The type alias for a scale represented as pitches
-///
 /// # Examples
 ///
 /// ```
 /// use no_surprises::scales::{ScaleQuality, MajorScaleQuality};
 ///
+/// // MajorScaleQuality implements ScaleQuality
+/// let _quality: &dyn ScaleQuality = &MajorScaleQuality;
 /// ```
-pub trait ScaleQuality: Sized {
-    /// The type alias for a scale represented as steps
-    type Steps: ToScaleInIntervals<Self> + ToScaleInPitches<Self>;
-
-    /// The type alias for a scale represented as intervals
-    type Intervals: ToScaleInSteps<Self> + ToScaleInPitches<Self>;
-
-    /// The type alias for a scale represented as pitches
-    type Pitches: ToScaleInSteps<Self> + ToScaleInIntervals<Self>;
-
-    /// The number of steps in the scale (excluding the octave)
-    const STEPS: usize;
-
-    /// The number of intervals in the scale (excluding the octave)
-    const INTERVALS: usize = Self::STEPS;
-
-    /// The number of pitches in the scale (including the octave)
-    const PITCHES: usize = Self::STEPS + 1;
-}
+pub trait ScaleQuality {}
 
 /// Trait for converting a scale into its interval representation
 ///
