@@ -192,7 +192,7 @@ macro_rules! define_scale {
 pub mod constants;
 
 // Module for heptatonic scales (7-note scales)
-pub mod heptatonic;
+mod heptatonic;
 
 // Re-export heptatonic scales
 pub use heptatonic::*;

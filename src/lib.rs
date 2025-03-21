@@ -16,7 +16,7 @@
 //!
 //! ```rust
 //! use no_surprises::prelude::*;
-//! use no_surprises::scales::*;
+//! use no_surprises::scales::major_scale;
 //!
 //! // Create a pitch
 //! let pitch = C4;
