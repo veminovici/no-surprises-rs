@@ -18,16 +18,6 @@
 use crate::{Interval, Pitch, Step};
 use std::marker::PhantomData;
 
-/// Trait for validating scale lengths
-pub trait ValidateScaleLength {
-    const MIN_LENGTH: usize;
-    const MAX_LENGTH: usize;
-
-    fn validate_length(length: usize) -> bool {
-        length >= Self::MIN_LENGTH && length <= Self::MAX_LENGTH
-    }
-}
-
 /// Trait for scale quality with additional validation
 pub trait ScaleQuality: Sized {
     const STEPS_LENGTH: usize;
@@ -35,57 +25,36 @@ pub trait ScaleQuality: Sized {
     type Pattern: AsRef<[Step]>;
     const STEPS_PATTERN: Self::Pattern;
 
-    // Add validation for scale pattern
-    fn validate_pattern(pattern: &[Step]) -> bool {
-        pattern.len() == Self::STEPS_LENGTH
-    }
-}
-
-/// Trait for validating scale steps
-pub trait ValidateScaleSteps {
     fn validate_steps(steps: &[Step]) -> bool {
-        // Ensure steps are positive
-        steps.iter().all(|&s| s.semitones() > 0)
+        steps.len() == Self::STEPS_LENGTH
     }
-}
 
-/// Trait for validating scale intervals
-pub trait ValidateScaleIntervals {
     fn validate_intervals(intervals: &[Interval]) -> bool {
-        // Ensure intervals are in ascending order
-        intervals.windows(2).all(|w| w[0] <= w[1])
+        intervals.len() == Self::STEPS_LENGTH
     }
-}
 
-/// Trait for validating scale pitches
-pub trait ValidateScalePitches {
-    fn validate_pitches(pitches: &[Pitch], length: usize) -> bool {
-        // check the length of the pitches
-        if pitches.len() != length {
-            return false;
-        }
-
-        // Ensure pitches are in ascending order
-        pitches.windows(2).all(|w| w[0] <= w[1])
+    fn validate_pitches(pitches: &[Pitch]) -> bool {
+        pitches.len() == Self::PITCHES_LENGTH
     }
 }
 
 /// Generic scale type with additional validation
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Scale<Q: ScaleQuality + ValidateScaleLength + ValidateScaleSteps, T, const N: usize> {
+pub struct Scale<Q: ScaleQuality, T, const N: usize> {
     items: [T; N],
     _quality: PhantomData<Q>,
 }
 
-impl<Q: ScaleQuality + ValidateScaleLength + ValidateScaleSteps, T, const N: usize> Scale<Q, T, N>
+impl<Q: ScaleQuality, T, const N: usize> Scale<Q, T, N>
 where
     T: std::fmt::Debug,
 {
     /// Creates a new scale with validation
     pub fn new(items: [T; N]) -> Self {
         assert!(
-            Q::validate_pattern(Q::STEPS_PATTERN.as_ref()),
-            "Invalid scale pattern"
+            Q::validate_steps(Q::STEPS_PATTERN.as_ref()),
+            "Invalid scale pattern. pattern: {:?}",
+            Q::STEPS_PATTERN.as_ref()
         );
 
         Self {
@@ -118,20 +87,6 @@ macro_rules! define_scale_quality {
                 const STEPS_LENGTH: usize = 7;
                 type Pattern = [Step; Self::STEPS_LENGTH];
                 const STEPS_PATTERN: Self::Pattern = $steps;
-            }
-
-            impl ValidateScaleLength for [<$name Quality>] {
-                const MIN_LENGTH: usize = 7;
-                const MAX_LENGTH: usize = 7;
-            }
-
-            impl ValidateScaleSteps for [<$name Quality>] {
-            }
-
-            impl ValidateScaleIntervals for [<$name Quality>] {
-            }
-
-            impl ValidateScalePitches for [<$name Quality>] {
             }
         }
     };
@@ -252,12 +207,10 @@ macro_rules! define_scale_functions {
             #[inline]
             pub fn [<$name:lower _scale_in_pitches>](root: Pitch) -> [<$name ScalePitches>] {
                 let pitches = [<$name Quality>]::STEPS_PATTERN.into_pitches(root);
-                let length = [<$name Quality>]::PITCHES_LENGTH;
 
                 debug_assert!(
-                    [<$name Quality>]::validate_pitches(&pitches, length),
-                    "Invalid pitches. length: {}, pitches: {:?}",
-                    length,
+                    [<$name Quality>]::validate_pitches(&pitches),
+                    "Invalid pitches. pitches: {:?}",
                     pitches);
 
                 [<$name ScalePitches>]::new(pitches)
@@ -265,14 +218,9 @@ macro_rules! define_scale_functions {
 
             #[inline]
             pub fn [<$name:lower _scale>](root: Pitch) -> [<$name ScalePitches>] {
+
                 let pitches = [<$name Quality>]::STEPS_PATTERN.into_pitches(root);
                 let length = [<$name Quality>]::PITCHES_LENGTH;
-
-                debug_assert!(
-                    [<$name Quality>]::validate_pitches(&pitches, length),
-                    "Invalid pitches. length: {}, pitches: {:?}",
-                    length,
-                    pitches);
 
                 [<$name ScalePitches>]::new(pitches)
             }
